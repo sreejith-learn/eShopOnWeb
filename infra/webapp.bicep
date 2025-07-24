@@ -7,16 +7,18 @@ var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: appServicePlanName
   location: location
-  properties: {
-    reserved: true
-  }
   sku: {
     name: sku
+    tier: 'Basic' // Required for a valid SKU block; 'B1' belongs to 'Basic' tier
+  }
+  properties: {
+    reserved: true // Required for Linux
   }
 }
+
 resource appService 'Microsoft.Web/sites@2022-09-01' = {
   name: webAppName
-  kind: 'app'
+  kind: 'app,linux' // Specify 'linux' kind to deploy on Linux
   location: location
   properties: {
     serverFarmId: appServicePlan.id
